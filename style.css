@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+.text-slide-top{
+    background-color: #020770;
+    color: white;
+}
+.carousel-inner{
+    text-align: center;
+}
+.carousel-item{ 
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+}
+#navbar{
+    margin: 10px 0;
+}
+#minnav a{
+    text-decoration:none;
+    color:black;
+}
+.card{
+    height: 400px;
+    width: 400px;
+}
+.card-img-top{
+    object-fit:contain;
+    height: 300px;
+}
+#shopSection .title{
+    background-color: black;
+    color: white;
+}
+#shopSection .row{
+    margin-left: 5px;
+}
+#signupForm{
+    height: 170px;
+    background: #0066FF;
+    color: white;
+}
+#signupForm .input-group .email,.btn{
+    border-radius: 0;
+}
+#signupForm .btn{
+    background-color: black;
+    color:#FFFFFF;
+}
+.footer .container{
+    font-size: 14px; 
+    font-family: Arial, sans-serif;
+    padding: 50px 70px;
+}
+.footer h5{
+    font-weight: 700;
+}
+.footer p{
+    font-style: italic;
+}
+.social-media {
+    display: flex; /* Use flexbox to align items */
+    justify-content: center; /* Center-align the items horizontally */
+}
+
+.social-media .row {
+    display: flex; /* Use flexbox for the row */
+}
+
+.social-media a {
+    margin: 0 20px; /* Adjust margin as needed */
+    font-size: 20px; /* Adjust icon size as needed */
+}
+
+.social-media a:hover {
+    color: #FFFFFF; /* Change icon color on hover if desired */
+}
+
