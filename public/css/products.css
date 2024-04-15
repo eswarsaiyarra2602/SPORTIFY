@@ -1,0 +1,54 @@
+/*SHOPPING BADMINTON*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+.navbar{
+    background-color: #2874f0;
+    border-bottom: 2px solid black; 
+    position: fixed;
+    top: 0; 
+    width: 100%; 
+    z-index: 1000; 
+}
+.navbar-brand , .nav-link{
+    color: #FFFFFF;
+    margin-left:15px;
+    margin-right: 15px;
+}
+#productsBadminton{
+    margin-top: 58px;
+}
+#productsBadminton h4{
+    background-color: black;
+    color:white;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.card{
+    height: 425px;
+    width: 255px;
+}
+.card-img-top{
+    object-fit:cover;
+    height: 280px;
+}
+.card-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-block p,
+.card-block button {
+    margin: 0;
+}
+#productsBadminton .row{
+    margin-right: 10px;
+    margin-bottom : 20px;
+    justify-content: space-evenly;
+}
+.bottom-p{
+    text-align: center; 
+}
