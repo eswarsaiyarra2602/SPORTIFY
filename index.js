@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require("path");
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
-
+const {v4:uuidv4} = require('uuid');
+const {setUser,getUser} = require('./service/auth')
 const app = express();
 const port = 3000;
 
@@ -23,11 +25,15 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 // Middleware
+const {restrictToLoggedInUserOnly}=require("./middlewares/authMiddleware");
+const { log } = require('console');
 app.use(bodyParser.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.set("view engine","ejs");
-app.set("views",path.resolve("./views"));
+ app.set("views",path.resolve("./views"));
 // Routes
 app.get('/',(req,res)=>{
     res.redirect("login");
@@ -38,6 +44,14 @@ app.get("/login",(req,res)=>{
 app.get("/signup",(req,res)=>{
     res.render("signup")
 })
+app.get("/index",restrictToLoggedInUserOnly,(req,res)=>{
+    res.render("index");
+})
+
+app.get("/badminton-products", restrictToLoggedInUserOnly, (req, res) => {
+    res.render("badminton_products", { userId: req.user._id });
+});
+
 
 app.post("/signup", async (req, res) => {
     try {
@@ -63,7 +77,10 @@ app.post("/login", async (req, res) => {
         const user = await User.findOne({ email, password });
         if (user) {
             // Send alert for successful login
-            res.send('<script>alert("Login successful"); window.location.href="/dashboard";</script>');
+            const sessionId = uuidv4();
+            setUser(sessionId , user);
+            res.cookie("uid",sessionId);
+            res.redirect("index");
         } else {
             // Send alert for invalid username or password
             res.send('<script>alert("Invalid username or password"); window.location.href="/login";</script>');
@@ -73,6 +90,7 @@ app.post("/login", async (req, res) => {
         res.send('<script>alert("Login failed"); window.location.href="/login";</script>');
     }
 });
+
 
 
 app.get("/user/:userID", async (req, res) => {
@@ -87,19 +105,34 @@ app.get("/user/:userID", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+
 app.post("/add-to-cart", async (req, res) => {
-    const { userID, itemID } = req.body;
+    const sessionId = req.cookies.uid; // Extract session ID from cookie
+    const itemId = req.body.itemId; // Extract item ID from request body
+    
+    // Retrieve user ID using session ID
+    const user = getUser(sessionId);
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
     try {
-        const user = await User.findByIdAndUpdate(userID, { $push: { cart: itemID } }, { new: true });
-        if (user) {
+        // Update the user's document to add the item to their cart
+        const updatedUser = await User.findByIdAndUpdate(user._id, { $push: { cart: itemId } }, { new: true });
+        
+        if (updatedUser) {
             res.status(200).json({ message: "Item added to cart successfully" });
         } else {
             res.status(404).json({ message: "User not found" });
         }
     } catch (error) {
+        console.error("Error adding item to cart:", error);
         res.status(400).json({ message: "Failed to add item to cart" });
     }
 });
+
 
 app.post("/add-to-wishlist", async (req, res) => {
     const { userID, itemID } = req.body;
@@ -171,3 +204,4 @@ app.post("/update-profile", async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
